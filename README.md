@@ -39,15 +39,18 @@ Among the 44 screened compounds, several monoterpenes and phenolics exhibited fa
 * Menthone / Menthol: Favorable docking scores and compliance with standard pharmacokinetic properties.
 
 ---
-├── data/ # Docking log summaries & ADMET profiling sheets
 
-├── docs/ # Technical reports and documentation
-
-└── README.md # Project documentation
+## Repository Structure
+```text
+leptospirosis-lipl32-docking-screening/
+├── data/               # Docking log summaries & ADMET profiling sheets
+├── docs/               # Technical reports and documentation
+└── README.md           # Project documentation
+```
 ---
-
 ## Author & Project Background
-* Researcher: Taban Tavanmand *(listed as Atefeh Tavanmand in original academic course records / BioCamp Winter 2021)*
-* Focus: Computational Biology, Molecular Modeling, and Drug Discovery
+* Researcher: Taban Tavanmand *(documented as Atefeh Tavanmand in original academic course records)*
+* Training & Program: BioCamp (Winter 2021) – Advanced Industrial Drug Design & Bioinformatics Pipeline
+* Research Focus: Structural Bioinformatics, Molecular Modeling & In-Silico Drug Discovery
 ## Repository Structure
 
