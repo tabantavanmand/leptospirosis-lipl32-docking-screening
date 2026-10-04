@@ -36,7 +36,7 @@ This computational project evaluates a library of 44 phytochemicals sourced from
 
 Among the 44 screened compounds, several monoterpenes and phenolics exhibited favorable binding affinities and clean drug-likeness profiles:
 * Carvacrol: Strong localized interaction with favorable binding thermodynamics and high intestinal permeability.
-* Menthone / Menthol: Favorable docking scores and compliance with standard pharmacokinetic properties.
+* Menthone: Favorable docking scores and compliance with standard pharmacokinetic properties.
 
 ---
 
