@@ -52,5 +52,5 @@ leptospirosis-lipl32-docking-screening/
 * Researcher: Taban Tavanmand *(documented as Atefeh Tavanmand in original academic course records)*
 * Training & Program: BioCamp (Winter 2021) – Advanced Industrial Drug Design & Bioinformatics Pipeline
 * Research Focus: Structural Bioinformatics, Molecular Modeling & In-Silico Drug Discovery
-## Repository Structure
+
 
