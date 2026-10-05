@@ -65,7 +65,8 @@ leptospirosis-lipl32-docking-screening/
 ├── README.md                          # Comprehensive project documentation
 ├── docking_and_admet_results.xlsx     # Raw docking scores and ADMET dataset
 ├── lipl32_lead_screening.py           # Automated lead filtering & visualization script
-└── lipl32_screening_summary.png       # Generated binding affinity & screening plot
+├── lipl32_screening_summary.png       # Generated binding affinity & screening plot
+└── requirements.txt                   # Environment dependencies
 ```
 ## Author & Project Background
 - Pipeline Developer & Researcher: Taban Tavanmand (documented as Atefeh Tavanmand in academic training records)
