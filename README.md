@@ -40,17 +40,31 @@ Among the 44 screened compounds, several monoterpenes and phenolics exhibited fa
 
 ---
 
+### Python Screening & Data Automation Pipeline
+
+To automate the multi-parametric screening of raw docking and ADMET datasets (docking_and_admet_results.xlsx), an automated screening script is integrated:
+```
+# Run lead screening and visualization pipeline
+python lipl32_lead_screening.py
+```
+* Data Cleaning & Standardization: Cleans binding energy metrics, Ki values, and pharmacokinetic properties.
+* Lead Filtering: Applies strict thresholding (Binding Energy <= -6.0 kcal/mol, HIA >= 80%, Carcinogenicity = Negative).
+* Visualization: Generates comparative multi-panel plots (lipl32_screening_summary.png) showcasing binding affinities and inhibition constants.
+
+---
+
 ## Repository Structure
 ```text
 leptospirosis-lipl32-docking-screening/
-├── data/               # Docking log summaries & ADMET profiling sheets
-├── docs/               # Technical reports and documentation
-└── README.md           # Project documentation
+├── README.md                      # Comprehensive project documentation
+├── docking_and_admet_results.xlsx # Complete docking & ADMET raw dataset (40 compounds)
+└── lipl32_lead_screening.py       # Python pipeline for data cleaning, filtering & plotting
 ```
 ---
 ## Author & Project Background
-* Researcher: Taban Tavanmand *(documented as Atefeh Tavanmand in original academic course records)*
-* Training & Program: BioCamp (Winter 2021) – Advanced Industrial Drug Design & Bioinformatics Pipeline
-* Research Focus: Structural Bioinformatics, Molecular Modeling & In-Silico Drug Discovery
+- Researcher & Pipeline Developer: Taban Tavanmand *(documented as Atefeh Tavanmand in original academic course records)*
+- Original Research & Docking Campaign: BioCamp (Winter 2021) – *Advanced Industrial Drug Design & Bioinformatics Pipeline*
+- Automation & Scripting: Python-based screening pipeline implemented for automated post-docking analysis and lead compound prioritization.
+- Research Focus: Structural Bioinformatics, In-Silico Molecular Docking, ADMET Profiling & Computational Screening Pipelines
 
 
