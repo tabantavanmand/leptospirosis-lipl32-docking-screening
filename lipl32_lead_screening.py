@@ -1,111 +1,120 @@
 """
-Multi-Parameter Screening & Lead Optimization Pipeline for Leptospirosis LipL32
+LipL32 Phytochemical Screening & Docking Analysis Pipeline
+===========================================================
+Automated screening, ranking, and visualization pipeline for AutoDock 
+binding affinities targeting Leptospirosis LipL32 outer membrane protein.
+
 Author: Taban Tavanmand
-Description:
-    Automated Python pipeline to screen LipL32 docking and ADMET profiles.
-    Filters hits based on thermodynamic affinity (binding energy <= -6.0 kcal/mol),
-    high gastrointestinal absorption (HIA >= 80%), and safety profiles (non-carcinogenic).
+License: MIT
 """
 
+import os
+import glob
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
+import seaborn as sns
 
-def clean_and_load_data(file_path):
-    """Loads the dataset and cleans duplicate headers and empty rows."""
-    df = pd.read_excel(file_path)
-    
-    # Drop rows where 'ligand' is null or repeats header name
-    df = df.dropna(subset=['ligand'])
-    df = df[df['ligand'].astype(str).str.lower() != 'ligand'].copy()
-    
-    # Clean numeric columns (handle asterisks if present)
-    numeric_cols = ['energy binding', 'ki', 'HIA', 'Bioavalabilitiy']
-    for col in numeric_cols:
-        if col in df.columns:
-            df[col] = df[col].astype(str).str.replace('*', '', regex=False)
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-            
-    return df
 
-def run_screening_pipeline(df, energy_threshold=-6.0, hia_threshold=80.0):
-    """Applies multi-parametric biological filters."""
-    # Filter 1: Binding energy cutoff
-    affinity_filter = df['energy binding'] <= energy_threshold
-    
-    # Filter 2: Intestinal absorption
-    absorption_filter = df['HIA'] >= hia_threshold
-    
-    # Filter 3: Carcinogenicity safety profile
-    safety_filter = df['Carcino-Mouse'].astype(str).str.strip().str.lower() == 'negative'
-    
-    screened_df = df[affinity_filter & absorption_filter & safety_filter].copy()
-    screened_df = screened_df.sort_values(by='energy binding', ascending=True)
-    
-    return screened_df
+def find_dataset():
+    """Locate the docking results dataset dynamically."""
+    candidates = [
+        "docking_and_admet_results.xlsx",
+        "docking_and_admet_results.xlsx.xlsx",
+        "www.xlsx",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    xlsx_files = glob.glob("*.xlsx")
+    if xlsx_files:
+        return xlsx_files[0]
+    raise FileNotFoundError(
+        "Could not find an Excel dataset (.xlsx) in the working directory."
+    )
 
-def plot_screening_results(df, screened_df, output_img="lipl32_screening_summary.png"):
-    """Generates comparative visualizations of binding energies and ADMET safety."""
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
-    
-    # Plot 1: Top Candidates Binding Energy
-    top_candidates = screened_df.head(8)
-    bars = ax1.bar(top_candidates['ligand'], top_candidates['energy binding'], 
-                   color='#2b5c8f', edgecolor='black', alpha=0.85)
-    ax1.set_title("Top Screened Leads: LipL32 Binding Affinity", fontsize=12, fontweight='bold')
-    ax1.set_xlabel("Ligand Code", fontsize=10)
-    ax1.set_ylabel("Binding Energy (kcal/mol)", fontsize=10)
-    ax1.grid(axis='y', linestyle='--', alpha=0.5)
-    
-    for bar in bars:
-        height = bar.get_height()
-        ax1.annotate(f"{height:.2f}",
-                     xy=(bar.get_x() + bar.get_width() / 2, height),
-                     xytext=(0, -12),
-                     textcoords="offset points",
-                     ha='center', va='bottom', fontsize=9, color='white', fontweight='bold')
-        
-    # Plot 2: Binding Energy vs Inhibition Constant (Ki)
-    scatter = ax2.scatter(df['energy binding'], df['ki'], 
-                          c=df['HIA'], cmap='viridis', 
-                          s=70, edgecolor='black', alpha=0.75)
-    cbar = plt.colorbar(scatter, ax=ax2)
-    cbar.set_label("Human Intestinal Absorption (HIA %)", fontsize=10)
-    
-    ax2.set_title("Thermodynamic Affinity vs Inhibition Constant (Ki)", fontsize=12, fontweight='bold')
-    ax2.set_xlabel("Binding Energy (kcal/mol)", fontsize=10)
-    ax2.set_ylabel("Inhibition Constant Ki (uM)", fontsize=10)
-    ax2.grid(True, linestyle='--', alpha=0.5)
-    
-    plt.tight_layout()
-    plt.savefig(output_img, dpi=300)
-    print(f"[+] Visualization exported successfully: {output_img}")
-    plt.show()
 
-def main():
-    # File path for raw docking/ADMET dataset
-    excel_file = "docking_and_admet_results.xlsx"
-    
-    if not os.path.exists(excel_file):
-        alt_names = ["docking_and_admet_results.xlsx.xlsx", "www.xlsx"]
-        for alt in alt_names:
-            if os.path.exists(alt):
-                excel_file = alt
+def identify_columns(df):
+    """Dynamically detect compound and binding energy column headers."""
+    norm_cols = {col: str(col).strip().lower() for col in df.columns}
+
+    # Detect ligand/compound column
+    lig_col = None
+    for orig, norm in norm_cols.items():
+        if any(k in norm for k in ["ligand", "compound", "name", "molecule", "phytochemical"]):
+            lig_col = orig
+            break
+    if not lig_col:
+        lig_col = df.columns[0]
+
+    # Detect binding energy column
+    energy_col = None
+    for orig, norm in norm_cols.items():
+        if "energy" in norm or "affinity" in norm or "kcal" in norm or "binding" in norm:
+            energy_col = orig
+            break
+    if not energy_col:
+        for col in df.columns:
+            if pd.api.types.is_numeric_dtype(df[col]):
+                energy_col = col
                 break
-              print(f"[*] Processing dataset: {excel_file}")
-    df = clean_and_load_data(excel_file)
-    print(f"[*] Total compounds evaluated: {len(df)}")
-    
-    screened_df = run_screening_pipeline(df)
-    print(f"[+] Compounds passing multi-parameter criteria: {len(screened_df)}")
-    
-    # Save top screened leads to CSV
+
+    return lig_col, energy_col
+
+
+def run_screening_pipeline(energy_threshold=-6.0):
+    """Execute filtering, lead selection, CSV export, and figure rendering."""
+    filepath = find_dataset()
+    print(f"[*] Loading dataset: {filepath}")
+    df = pd.read_excel(filepath)
+
+    lig_col, energy_col = identify_columns(df)
+    print(f"[*] Detected columns -> Ligand: '{lig_col}', Energy: '{energy_col}'")
+
+    # Clean numeric binding energies
+    df[energy_col] = pd.to_numeric(df[energy_col], errors="coerce")
+    cleaned_df = df.dropna(subset=[lig_col, energy_col]).copy()
+
+    # Filter by binding affinity threshold
+    screened_leads = cleaned_df[cleaned_df[energy_col] <= energy_threshold].copy()
+    screened_leads = screened_leads.sort_values(by=energy_col, ascending=True)
+
+    print(f"[*] Total screened leads meeting criteria (<= {energy_threshold} kcal/mol): {len(screened_leads)}")
+
+    # Export top screened leads
     output_csv = "top_screened_leads.csv"
-    screened_df.to_csv(output_csv, index=False)
-    print(f"[+] Screened results saved to: {output_csv}")
-    
-    # Generate visualization
-    plot_screening_results(df, screened_df)
+    screened_leads.to_csv(output_csv, index=False)
+    print(f"[+] Saved screened leads to: {output_csv}")
+
+    # Plotting
+    sns.set_theme(style="whitegrid", palette="muted")
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
+
+    plot_data = screened_leads.head(15)
+    barplot = sns.barplot(
+        data=plot_data,
+        x=energy_col,
+        y=lig_col,
+        palette="viridis",
+        ax=ax
+    )
+
+    ax.set_title(
+        "LipL32 Target Screening: Lead Phytochemicals by Binding Free Energy",
+        fontsize=13,
+        fontweight="bold",
+        pad=15
+    )
+    ax.set_xlabel("Binding Affinity (kcal/mol)", fontsize=11, labelpad=10)
+    ax.set_ylabel("Phytochemical Compound", fontsize=11)
+    ax.axvline(energy_threshold, color="crimson", linestyle="--", linewidth=1.2, label=f"Cutoff ({energy_threshold} kcal/mol)")
+    ax.legend(loc="lower right")
+
+    plt.tight_layout()
+    output_png = "lipl32_screening_summary.png"
+    plt.savefig(output_png, bbox_inches="tight")
+    plt.close()
+    print(f"[+] Figure rendered successfully: {output_png}")
+
 
 if name == "main":
-    main()
+    run_screening_pipeline()
