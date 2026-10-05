@@ -38,6 +38,11 @@ Among the 44 screened compounds, several monoterpenes and phenolics exhibited fa
 * Carvacrol: Strong localized interaction with favorable binding thermodynamics and high intestinal permeability.
 * Menthone: Favorable docking scores and compliance with standard pharmacokinetic properties.
 
+The screening pipeline identified potential phytochemical leads with binding affinities $\leq -6.0$ kcal/mol against the LipL32 target.
+
+![LipL32 Screening Summary](lipl32_screening_summary.png)
+*Figure: Binding affinity profile of top lead phytochemical candidates.*
+
 ---
 
 ### Python Screening & Data Automation Pipeline
@@ -56,9 +61,10 @@ python lipl32_lead_screening.py
 ## Repository Structure
 ```text
 leptospirosis-lipl32-docking-screening/
-├── README.md                      # Comprehensive project documentation
-├── docking_and_admet_results.xlsx # Complete docking & ADMET raw dataset (40 compounds)
-└── lipl32_lead_screening.py       # Python pipeline for data cleaning, filtering & plotting
+├── README.md                          # Comprehensive project documentation
+├── docking_and_admet_results.xlsx     # Raw docking scores and ADMET dataset
+├── lipl32_lead_screening.py           # Automated lead filtering & visualization script
+└── lipl32_screening_summary.png       # Generated binding affinity & screening plot
 ```
 ---
 ## Author & Project Background
